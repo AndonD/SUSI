@@ -18,7 +18,7 @@ Subject::Subject(String _name, bool _isCompulsory, unsigned int _course)
 	this->grade = 2;	//default grade
 }
 
-Subject& Subject::operator=(const Subject & other)
+Subject& Subject::operator=(const Subject &other)
 {
 	if (this != &other)
 	{
@@ -36,12 +36,12 @@ Subject::~Subject()
 }
 
 
-bool Subject::operator== (const Subject & other)
+bool Subject::operator== (const Subject &other)
 {
 	return ( (this->name == other.name) && (this->course == other.course) );
 }
 
-bool Subject::operator!= (const Subject & other)
+bool Subject::operator!= (const Subject &other)
 {
 	return ((this->name != other.name) || (this->course != other.course));
 }
@@ -67,7 +67,7 @@ void Subject::setGrade(float _grade)
 }
 
 
-std::ostream& operator<< (std::ostream& out, Subject subject)
+std::ostream& operator<< (std::ostream &out, Subject subject)
 {
 	out << subject.getName();
 	return out;

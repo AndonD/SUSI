@@ -17,21 +17,21 @@ Specialty::~Specialty()
 }
 
 
-bool Specialty::isRegisteredSubject(const Subject & subject)
+bool Specialty::isRegisteredSubject(const Subject &subject)
 {
 	return this->subjects.containsElement(subject);
 }
 
-bool Specialty::isRegisteredStudent(const Student & student)
+bool Specialty::isRegisteredStudent(const Student &student)
 {
 	return this->students.containsElement(student);
 }
 
-bool Specialty::isPassedExam(unsigned int fn, Subject subjectToCompareWith)
+bool Specialty::isPassedExam(unsigned int facultyNumber, Subject subjectToCompareWith)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].hasPassedExam(subjectToCompareWith);
 		}
@@ -39,11 +39,11 @@ bool Specialty::isPassedExam(unsigned int fn, Subject subjectToCompareWith)
 	return false;	//Default return
 }
 
-bool Specialty::isReadyToAdvance(unsigned int fn)
+bool Specialty::isReadyToAdvance(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].isReadyToAdvance();
 		}
@@ -51,11 +51,11 @@ bool Specialty::isReadyToAdvance(unsigned int fn)
 	return false;	//Default return
 }
 
-bool Specialty::isReadyToChangeSpecialty(unsigned int fn)
+bool Specialty::isReadyToChangeSpecialty(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].isReadyToChangeSpecialty();
 		}
@@ -63,11 +63,11 @@ bool Specialty::isReadyToChangeSpecialty(unsigned int fn)
 	return false;	//Default return
 }
 
-bool Specialty::isReadyToGraduate(unsigned int fn)
+bool Specialty::isReadyToGraduate(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].isReadyToGraduate();
 		}
@@ -75,11 +75,11 @@ bool Specialty::isReadyToGraduate(unsigned int fn)
 	return false;	//Default return
 }
 
-bool Specialty::isInterruptedStudent(unsigned int fn)
+bool Specialty::isInterruptedStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].isInterrupted();
 		}
@@ -87,11 +87,11 @@ bool Specialty::isInterruptedStudent(unsigned int fn)
 	return false;	//Default return
 }
 
-bool Specialty::isGraduatedStudent(unsigned int fn)
+bool Specialty::isGraduatedStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i].isGraduated();
 		}
@@ -100,12 +100,12 @@ bool Specialty::isGraduatedStudent(unsigned int fn)
 }
 
 
-bool Specialty::operator== (const Specialty& other)
+bool Specialty::operator== (const Specialty &other)
 {
 	return (this->name == other.name);
 }
 
-bool Specialty::operator!= (const Specialty& other)
+bool Specialty::operator!= (const Specialty &other)
 {
 	return (this->name != other.name);
 }
@@ -125,11 +125,11 @@ Vector<Subject> Specialty::getSubjects() const
 	return subjects;
 }
 
-Student Specialty::findStudent(unsigned int fn)
+Student Specialty::findStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)	//Going through the students in this specialty
 	{
-		if (students[i].getFN() == fn)	//Finding the student with this faculty number
+		if (students[i].getFacultyNumber() == facultyNumber)	//Finding the student with this faculty number
 		{
 			return students[i];
 		}
@@ -137,23 +137,23 @@ Student Specialty::findStudent(unsigned int fn)
 }
 
 
-void Specialty::add_subject(const Subject& subjectToAdd)
+void Specialty::add_subject(const Subject &subjectToAdd)
 {
 	subjects.push_back(subjectToAdd);
 	std::cout << "Subject '" << subjectToAdd.getName() << "' successfully added to specialty '" << name << "'!\n\n";
 }
 
-void Specialty::enroll_student(const Student & studentToEnroll)
+void Specialty::enroll_student(const Student &studentToEnroll)
 {
 	students.push_back(studentToEnroll);
 	std::cout << "Student '" << studentToEnroll.getName() << "' successfully enrolled to specialty '" << name << "'!\n\n";
 }
 
-void Specialty::advanceStudent(unsigned int fn)
+void Specialty::advanceStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].advance();
 			return;
@@ -161,11 +161,11 @@ void Specialty::advanceStudent(unsigned int fn)
 	}
 }
 
-void Specialty::changeGroupOfStudent(unsigned int fn, unsigned int newGroup)
+void Specialty::changeGroupOfStudent(unsigned int facultyNumber, unsigned int newGroup)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].setNewGroup(newGroup);
 			return;
@@ -173,11 +173,11 @@ void Specialty::changeGroupOfStudent(unsigned int fn, unsigned int newGroup)
 	}
 }
 
-void Specialty::graduateStudent(unsigned int fn)
+void Specialty::graduateStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].graduate();
 			return;
@@ -185,11 +185,11 @@ void Specialty::graduateStudent(unsigned int fn)
 	}
 }
 
-void Specialty::interruptStudent(unsigned int fn)
+void Specialty::interruptStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].interrupt();
 			return;
@@ -197,11 +197,11 @@ void Specialty::interruptStudent(unsigned int fn)
 	}
 }
 
-void Specialty::resumeStudent(unsigned int fn)
+void Specialty::resumeStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].resume();
 			return;
@@ -209,11 +209,11 @@ void Specialty::resumeStudent(unsigned int fn)
 	}
 }
 
-void Specialty::enrollStudentInSubject(unsigned int fn, Subject subject)
+void Specialty::enrollStudentInSubject(unsigned int facultyNumber, Subject subject)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].enrollInSubject(subject);
 			return;
@@ -221,11 +221,11 @@ void Specialty::enrollStudentInSubject(unsigned int fn, Subject subject)
 	}
 }
 
-void Specialty::addGradeToSubject(unsigned int fn, Subject subjectToCompareWith, float grade)
+void Specialty::addGradeToSubject(unsigned int facultyNumber, Subject subjectToCompareWith, float grade)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students[i].setGradeToSubject(subjectToCompareWith, grade);
 			return;
@@ -233,11 +233,11 @@ void Specialty::addGradeToSubject(unsigned int fn, Subject subjectToCompareWith,
 	}
 }
 
-void Specialty::removeStudent(unsigned int fn)
+void Specialty::removeStudent(unsigned int facultyNumber)
 {
 	for (size_t i = 0; i < students.length(); i++)
 	{
-		if (students[i].getFN() == fn)
+		if (students[i].getFacultyNumber() == facultyNumber)
 		{
 			students.removeFromIndex(i);
 			return;
@@ -245,7 +245,7 @@ void Specialty::removeStudent(unsigned int fn)
 	}
 }
 
-void Specialty::addToNewSpecialty(const Student & student)
+void Specialty::addToNewSpecialty(const Student &student)
 {
 	students.push_back(student);
 	std::cout << "Student '" << student.getName() << "' successfully moved to specialty '" << name << "'!\n\n";
@@ -273,7 +273,7 @@ void Specialty::protocol(String subjectName)
 			for (size_t j = i + 1; j < studentsInProtocol.length(); j++)
 			{
 				//If there is a student on index bigger than minimum(i) with smaller faculty number, then change the value of "minimum" to swap the students
-				if (studentsInProtocol[minimum].getFN() > studentsInProtocol[j].getFN())
+				if (studentsInProtocol[minimum].getFacultyNumber() > studentsInProtocol[j].getFacultyNumber())
 				{
 					minimum = j;
 				}
@@ -286,15 +286,27 @@ void Specialty::protocol(String subjectName)
 	std::cout << "Faculty number\t\tName\t\t\tGrade\n";
 	for (size_t i = 0; i < studentsInProtocol.length(); i++)
 	{
-		std::cout << studentsInProtocol[i].getFN() << "\t\t\t" 
+		std::cout << studentsInProtocol[i].getFacultyNumber() << "\t\t\t"
 				  << studentsInProtocol[i].getName() << "\t\t\t"
 				  << studentsInProtocol[i].getGrade(subjectName) << std::endl;
 	}
 	std::cout << std::endl;
 }
 
+void Specialty::report(unsigned int facultyNumber)
+{
+	for (size_t i = 0; i < students.length(); i++)
+	{
+		if (students[i].getFacultyNumber() == facultyNumber)
+		{
+			students[i].report();
+			return;
+		}
+	}
+}
 
-std::ostream& operator<< (std::ostream& out, Specialty specialty)
+
+std::ostream& operator<< (std::ostream &out, Specialty specialty)
 {
 	out << specialty.getName();
 	return out;

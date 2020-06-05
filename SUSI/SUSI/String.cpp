@@ -14,10 +14,10 @@ String::String(char c)
 {
 	this->content = new char[2];
 	this->content[0] = c;
-	this->content[1] = 0;
+	this->content[1] = '\0';
 }
 
-String::String(const char *otherStr)
+String::String(const char* otherStr)
 {
 	initialize(otherStr);
 }
@@ -29,7 +29,12 @@ String::String(const String &other)
 	{
 		this->content[i] = other.content[i];
 	}
-	this->content[other.length()] = 0;
+	this->content[other.length()] = '\0';
+}
+
+char* String::c_str() const
+{
+	return this->content;
 }
 
 size_t String::length() const
@@ -37,7 +42,7 @@ size_t String::length() const
 	return strlen(this->content);
 }
 
-void String::initialize(const char *otherStr)
+void String::initialize(const char* otherStr)
 {
 	size_t otherLength = strlen(otherStr);
 	this->content = new char[otherLength + 1];
@@ -45,7 +50,7 @@ void String::initialize(const char *otherStr)
 	{
 		this->content[i] = otherStr[i];
 	}
-	this->content[otherLength] = 0;
+	this->content[otherLength] = '\0';
 }
 
 void String::clear()
@@ -53,7 +58,7 @@ void String::clear()
 	this->initialize("");
 }
 
-void String::print()
+void String::print() const
 {
 	std::cout << this->content << std::endl;
 }
@@ -67,7 +72,7 @@ String String::operator+ (char c)
 		result.content[i] = this->content[i];
 	}
 	result.content[this->length()] = c;
-	result.content[this->length() + 1] = 0;
+	result.content[this->length() + 1] = '\0';
 
 	return result;
 }
@@ -80,7 +85,7 @@ String& String::operator+= (char c)
 		buffer.content[i] = this->content[i];
 	}
 	buffer.content[this->length()] = c;
-	buffer.content[this->length() + 1] = 0;
+	buffer.content[this->length() + 1] = '\0';
 
 	delete[]this->content;
 	this->initialize(buffer.content);
@@ -99,7 +104,7 @@ String String::operator+ (const String &other)
 	{
 		result.content[this->length() + i] = other.content[i];
 	}
-	result.content[this->length() + other.length()] = 0;
+	result.content[this->length() + other.length()] = '\0';
 
 	return result;
 }
@@ -115,7 +120,7 @@ String& String::operator+= (const String &other)
 	{
 		buffer.content[this->length() + i] = other.content[i];
 	}
-	buffer.content[this->length() + other.length()] = 0;
+	buffer.content[this->length() + other.length()] = '\0';
 
 	delete[] this->content;
 	this->initialize(buffer.content);
@@ -125,7 +130,7 @@ String& String::operator+= (const String &other)
 
 bool String::operator== (const String &other)
 {
-	return ( strcmp(this->content, other.content) == 0 );
+	return (strcmp(this->content, other.content) == 0);
 }
 
 bool String::operator!= (const String &other)
@@ -142,18 +147,20 @@ String& String::operator= (char c)
 {
 	this->content = new char[2];
 	this->content[0] = c;
-	this->content[1] = 0;
+	this->content[1] = '\0';
 	return *this;
 }
 
-String& String::operator=(const char* otherStr)
+String& String::operator= (const char* otherStr)
 {
+	delete[] this->content;
 	this->initialize(otherStr);
 	return *this;
 }
 
 String& String::operator= (const String &other)
 {
+	delete[] this->content;
 	this->initialize(other.content);
 	return *this;
 }
@@ -172,13 +179,13 @@ String operator+ (char c, const String &str)
 	return result;
 }
 
-std::ostream& operator<< (std::ostream& out, String str)
+std::ostream& operator<< (std::ostream &out, const String &str)
 {
-	out << str.content;
+	out << str.c_str();
 	return out;
 }
 
-std::istream& operator>> (std::istream& in, String& str)
+std::istream& operator>> (std::istream &in, String &str)
 {
 	char c;
 	do
@@ -186,7 +193,7 @@ std::istream& operator>> (std::istream& in, String& str)
 		c = in.get();
 		if (c != '\n')
 		{
-			str = str + c;
+			str += c;
 		}
 	} while (c != '\n');
 

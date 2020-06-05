@@ -13,7 +13,7 @@ Vector<T>::Vector()
 }
 
 template <class T>
-Vector<T>::Vector(const Vector<T>& vect)
+Vector<T>::Vector(const Vector<T> &vect)
 {
 	this->size = vect.size;
 	this->data = new T[vect.size];
@@ -24,9 +24,9 @@ Vector<T>::Vector(const Vector<T>& vect)
 }
 
 template <class T>
-void Vector<T>::push_back(const T& x)
+void Vector<T>::push_back(const T &x)
 {
-	T *biggerBuffer = new T[this->size + 1];
+	T* biggerBuffer = new T[this->size + 1];
 	for (size_t i = 0; i < this->size; ++i)
 	{
 		biggerBuffer[i] = this->data[i];
@@ -44,9 +44,9 @@ void Vector<T>::push_back(const T& x)
 }
 
 template <class T>
-void Vector<T>::push_front(const T& x)
+void Vector<T>::push_front(const T &x)
 {
-	T *biggerBuffer = new T[this->size + 1];
+	T* biggerBuffer = new T[this->size + 1];
 	for (size_t i = 0; i < this->size; ++i)
 	{
 		biggerBuffer[i + 1] = this->data[i];
@@ -64,7 +64,7 @@ void Vector<T>::push_front(const T& x)
 }
 
 template <class T>
-void Vector<T>::pop_back()
+void Vector<T>::remove_last()
 {
 	if (this->size > 0)
 	{
@@ -77,7 +77,7 @@ void Vector<T>::pop_back()
 }
 
 template <class T>
-void Vector<T>::pop_front()
+void Vector<T>::remove_first()
 {
 	if (this->size > 0)
 	{
@@ -90,11 +90,11 @@ void Vector<T>::pop_front()
 }
 
 template <class T>
-void Vector<T>::removeFromIndex(int x)
+void Vector<T>::removeFromIndex(size_t x)
 {
 	if (x <= this->size - 1)
 	{
-		T *smallerBuffer = new T[this->size - 1];
+		T* smallerBuffer = new T[this->size - 1];
 		for (size_t i = 0; i < x; i++)
 		{
 			smallerBuffer[i] = this->data[i];
@@ -120,9 +120,9 @@ void Vector<T>::removeFromIndex(int x)
 }
 
 template<class T>
-bool Vector<T>::containsElement(const T& x) const
+bool Vector<T>::containsElement(const T &x) const
 {
-	for (size_t i = 0; i < this->length(); i++)
+	for (size_t i = 0; i < this->size; i++)
 	{
 		if (this->data[i] == x)
 		{
@@ -133,14 +133,14 @@ bool Vector<T>::containsElement(const T& x) const
 }
 
 template <class T>
-Vector<T>& Vector<T>::operator+= (const T& x)
+Vector<T>& Vector<T>::operator+= (const T &x)
 {
 	this->push_back(x);
 	return *this;
 }
 
 template <class T>
-Vector<T> Vector<T>::operator+ (const T& x) const
+Vector<T> Vector<T>::operator+ (const T &x) const
 {
 	Vector<T> result(*this);
 	result += x;
@@ -148,9 +148,9 @@ Vector<T> Vector<T>::operator+ (const T& x) const
 }
 
 template <class T>
-Vector<T>& Vector<T>::operator+= (const Vector<T>& other)
+Vector<T>& Vector<T>::operator+= (const Vector<T> &other)
 {
-	T *newBuffer = new T[this->size + other.size];
+	T* newBuffer = new T[this->size + other.size];
 	for (size_t i = 0; i < this->size; ++i)
 	{
 		newBuffer[i] = this->data[i];
@@ -168,7 +168,7 @@ Vector<T>& Vector<T>::operator+= (const Vector<T>& other)
 }
 
 template <class T>
-Vector<T> Vector<T>::operator+ (const Vector<T>& other) const
+Vector<T> Vector<T>::operator+ (const Vector<T> &other) const
 {
 	Vector<T> result;
 
@@ -199,7 +199,7 @@ T Vector<T>::operator[] (size_t i) const
 }
 
 template <class T>
-Vector<T>& Vector<T>::operator= (const Vector<T>& vect)
+Vector<T>& Vector<T>::operator= (const Vector<T> &vect)
 {
 	if (this != &vect)
 	{
@@ -222,7 +222,7 @@ size_t Vector<T>::length() const
 }
 
 template <class T>
-bool Vector<T>::operator==(const Vector<T>& other)
+bool Vector<T>::operator== (const Vector<T> &other) const
 {
 	if (this->size == other.size)
 	{
@@ -239,13 +239,13 @@ bool Vector<T>::operator==(const Vector<T>& other)
 }
 
 template <class T>
-bool Vector<T>::operator!=(const Vector<T>& other)
+bool Vector<T>::operator!= (const Vector<T> &other) const
 {
 	return !(this == other);
 }
 
 template <class T>
-bool Vector<T>::isEmpty()
+bool Vector<T>::isEmpty() const
 {
 	return (this->size == 0);
 }
@@ -258,21 +258,19 @@ Vector<T>::~Vector()
 
 
 template <class T>
-std::ostream& operator<< (std::ostream& stream, const Vector<T>& vect)
+std::ostream& operator<< (std::ostream &out, const Vector<T> &vect)
 {
-
-	stream << "[";
+	//out << "[";
 	for (size_t i = 0; i < vect.length(); ++i)
 	{
 		if (i == vect.length() - 1)
 		{
-			std::cout << vect[i];
+			out << vect[i];
 			continue;
 		}
-		std::cout << vect[i] << ", ";
+		out << vect[i] << ", ";
 	}
-	stream << "]";
+	//out << "]";
 
-	return stream;
+	return out;
 }
-

@@ -21,20 +21,20 @@ public:
 	bool isRegisteredSpecialty(String specialtyName);
 	bool isRegisteredSubjectInSpecialty(String subjectName, unsigned int course, String specialtyName);
 	bool isRegisteredSubject(String subjectName, unsigned int course);
-	bool isPassedExam(unsigned int fn, Subject subjectToCompare);
-	bool isRegisteredStudentInSpecialty(unsigned int fn, String specialtyName, unsigned int group, String name);
-	bool isRegisteredStudentByFacultyNumber(unsigned int fn);
-	bool isReadyToAdvance(unsigned int fn);
-	bool isReadyToChangeSpecialty(unsigned int fn);
-	bool isInterrupted(unsigned int fn);
-	bool isGraduated(unsigned int fn);
-	bool isReadyToGraduate(unsigned int fn);
-	unsigned int findingCourseOfStudent(unsigned int fn);
-	String findingSpecialtyOfStudent(unsigned int fn);
+	bool isPassedExam(unsigned int facultyNumber, Subject subjectToCompare);
+	bool isRegisteredStudentInSpecialty(unsigned int facultyNumber, String specialtyName);
+	bool isRegisteredStudentByFacultyNumber(unsigned int facultyNumber);
+	bool isReadyToAdvance(unsigned int facultyNumber);
+	bool isReadyToChangeSpecialty(unsigned int facultyNumber);
+	bool isInterrupted(unsigned int facultyNumber);
+	bool isGraduated(unsigned int facultyNumber);
+	bool isReadyToGraduate(unsigned int facultyNumber);
+	unsigned int findingCourseOfStudent(unsigned int facultyNumber);
+	String findingSpecialtyOfStudent(unsigned int facultyNumber);
 	Subject findingSubjectAndSettingData(String subjectName, unsigned int studentCourse, String studentSpecialty);
-	Student findStudent(unsigned int fn);
-	void removeFromCurrentSpecialty(unsigned int fn);
-	void addToNewSpecialty(const Student & student, String newSpecialty);
+	Student findStudent(unsigned int facultyNumber);
+	void removeFromCurrentSpecialty(unsigned int facultyNumber);
+	void addToNewSpecialty(const Student &student, String newSpecialty);
 	
 
 	
@@ -48,19 +48,19 @@ public:
 	//Specific command functions
 	void add_specialty(Specialty specialty);
 	void add_subject(String name, bool isCompulsory, unsigned int course, String specialtyName);
-	void enroll(unsigned int fn, String specialty, unsigned int group, String name);
-	void advance(unsigned int fn);
-	void changeSpecialty(unsigned int fn, String newSpecialty);
-	void changeGroup(unsigned int fn, unsigned int newGroup);
-	void graduate(unsigned int fn);
-	void interrupt(unsigned int fn);
-	void resume(unsigned int fn);
-	void print(unsigned int fn);
+	void enroll(unsigned int facultyNumber, String specialty, unsigned int group, String name);
+	void advance(unsigned int facultyNumber);
+	void changeSpecialty(unsigned int facultyNumber, String newSpecialty);
+	void changeGroup(unsigned int facultyNumber, unsigned int newGroup);
+	void graduate(unsigned int facultyNumber);
+	void interrupt(unsigned int facultyNumber);
+	void resume(unsigned int facultyNumber);
+	void print(unsigned int facultyNumber);
 	void print_all(String specialtyName, unsigned int course);
-	void enroll_in(unsigned int fn, Subject subject);
-	void add_grade(unsigned int fn, Subject subjectToCompareWith, float grade);
+	void enroll_in(unsigned int facultyNumber, Subject subject);
+	void add_grade(unsigned int facultyNumber, Subject subjectToCompareWith, float grade);
 	void protocol(String subjectName);
-	void report(unsigned int fn);
+	void report(unsigned int facultyNumber);
 
 	//Functions for preparing data
 	void prepareAdd_Specialty(String input, int currentIndex);

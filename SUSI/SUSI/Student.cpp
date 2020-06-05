@@ -5,7 +5,7 @@
 Student::Student()
 {
 	name = "";
-	fn = 0;
+	facultyNumber = 0;
 	specialty = "";
 	group = 0;
 	course = 0;
@@ -13,10 +13,10 @@ Student::Student()
 	averageGrade = 0;
 }
 
-Student::Student(String _name, unsigned int _fn, String _specialty, unsigned int _group)
+Student::Student(String _name, unsigned int _facultyNumber, String _specialty, unsigned int _group)
 {
 	this->name = _name;
-	this->fn = _fn;
+	this->facultyNumber = _facultyNumber;
 	this->specialty = _specialty;
 	this->group = _group;
 	this->course = 1;
@@ -24,10 +24,10 @@ Student::Student(String _name, unsigned int _fn, String _specialty, unsigned int
 	this->averageGrade = 0;
 }
 
-Student & Student::operator=(const Student& other)
+Student& Student::operator=(const Student &other)
 {
 	this->name = other.name;
-	this->fn = other.fn;
+	this->facultyNumber = other.facultyNumber;
 	this->specialty = other.specialty;
 	this->course = other.course;
 	this->group = other.group;
@@ -43,14 +43,14 @@ Student::~Student()
 }
 
 
-bool Student::operator== (const Student& other)
+bool Student::operator== (const Student &other)
 {
-	return (this->fn == other.fn);
+	return (this->facultyNumber == other.facultyNumber);
 }
 
-bool Student::operator!= (const Student& other)
+bool Student::operator!= (const Student &other)
 {
-	return (this->fn != other.fn);
+	return (this->facultyNumber != other.facultyNumber);
 }
 
 
@@ -59,9 +59,9 @@ String Student::getName() const
 	return this->name;
 }
 
-unsigned int Student::getFN() const
+unsigned int Student::getFacultyNumber() const
 {
-	return this->fn;
+	return this->facultyNumber;
 }
 
 String Student::getSpecialty() const
@@ -198,13 +198,13 @@ void Student::advance()
 	}
 
 	this->course++;
-	std::cout << "Student with faculty number " << this->fn << " successfully passed " << this->course - 1 << " course. Already enrolled in " << this->course << " course.\n\n";
+	std::cout << "Student with faculty number " << this->facultyNumber << " successfully passed " << this->course - 1 << " course. Already enrolled in " << this->course << " course.\n\n";
 }
 
 void Student::setNewGroup(unsigned int newGroup)
 {
 	this->group = newGroup;
-	std::cout << "Student with faculty number " << fn << " successfully moved to " << this->group << " group.\n\n";
+	std::cout << "Student with faculty number " << facultyNumber << " successfully moved to " << this->group << " group.\n\n";
 }
 
 void Student::setNewSpecialty(String newSpecialty)
@@ -215,26 +215,26 @@ void Student::setNewSpecialty(String newSpecialty)
 void Student::graduate()
 {
 	this->status = "graduated";
-	std::cout << "Student with faculty number " << fn << " successfully graduated!\n\n";
+	std::cout << "Student with faculty number " << facultyNumber << " successfully graduated!\n\n";
 }
 
 void Student::interrupt()
 {
 	this->status = "interrupted";
-	std::cout << "Student with faculty number " << fn << " interrupted.\n\n";
+	std::cout << "Student with faculty number " << facultyNumber << " interrupted.\n\n";
 }
 
 void Student::resume()
 {
 	this->status = "enrolled";
-	std::cout << "Student with faculty number " << fn << " resumed.\n\n";
+	std::cout << "Student with faculty number " << facultyNumber << " resumed.\n\n";
 }
 
 void Student::enrollInSubject(Subject subject)
 {
 	this->subjects.push_back(subject);	//Adding the new subject
 	updateAverageGrade();
-	std::cout << "Student with faculty number " << this->fn
+	std::cout << "Student with faculty number " << this->facultyNumber
 			  << " successfully enrolled in subject '" << subject << "'.\n\n";
 }
 
@@ -296,13 +296,49 @@ void Student::removeUnpassedElectiveSubjects()
 	}
 }
 
+void Student::report()
+{
+	Vector<Subject> passedExams;
+	Vector<Subject> unpassedExams;
+
+	for (size_t i = 0; i < subjects.length(); i++)
+	{
+		if (3 <= subjects[i].getGrade() && subjects[i].getGrade() <= 6)
+		{
+			passedExams.push_back(subjects[i]);
+		}
+		else
+		{
+			unpassedExams.push_back(subjects[i]);
+		}
+	}
+
+	//Валидирай дали са празни векторите
+	//Изхвърля ме от програмата ако студентът няма предмети и изкарва 
+
+	std::cout << "Passed exams:\n";
+	for (size_t i = 0; i < passedExams.length(); i++)	//Output the list of passed exams
+	{
+		std::cout << passedExams[i] << " --> " << passedExams[i].getGrade() << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Unpassed exams:\n";
+	for (size_t i = 0; i < unpassedExams.length(); i++)	//Output the list of unpassed exams
+	{
+		std::cout << unpassedExams[i] << " --> " << passedExams[i].getGrade() << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Average grade: " << averageGrade << "\n\n";
+}
 
 
-std::ostream & operator<<(std::ostream & out, Student student)
+std::ostream& operator<<(std::ostream &out, Student student)
 {
 
 	out << "Student info:\n";
-	out << "Faculty number: " << student.getFN() << std::endl;
+	out << "Faculty number: " << student.getFacultyNumber() << std::endl;
 	out << "Name: " << student.getName() << std::endl;
 	out << "Specialty: " << student.getSpecialty() << std::endl;
 	out << "Course: " << student.getCourse() << std::endl;

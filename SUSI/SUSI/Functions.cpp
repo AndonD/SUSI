@@ -9,22 +9,31 @@
 #include "Vector.cpp"
 #include "SUSI.h"
 
-
-//Basic command functions
-void open();
-void close();
-void save();
-void save_as();
-void help();
-
-//Other functions
 String findingNextWord(String input, int &currentIndex);
 unsigned int stringToPositiveNumber(String stringNumber, int size);
 bool isEndOfString(String input, int currentIndex);
-
+bool isNotEndOfString(String input, int currentIndex);
 
 //Basic command functions
-
+void SUSI::help()
+{
+	std::cout << "add_specialty <specialty name>\n"
+		<< "add_subject <name of subject> <type ('compulsory' or 'elective')> <year> <name of specialty>\n"
+		<< "enroll <faculty number> <specialty> <group> <name(s) of student>\n"
+		<< "advance <faculty number>\n"
+		<< "change <faculty number> <option ('specialty'/'group'/'year')> <value>\n"
+		<< "graduate <faculty number>\n"
+		<< "interrupt <faculty number>\n"
+		<< "resume <faculty number>\n"
+		<< "print <faculty number>\n"
+		<< "print_all <specialty> <year>\n"
+		<< "enroll_in <faculty number> <subject>\n"
+		<< "add_grade <faculty number> <subject> <grade>\n"
+		<< "protocol <subject>\n"
+		<< "report <faculty number>\n"
+		<< "help -> prints this info\n\n"
+		<< "exit - ends the program\n\n";
+}
 
 //Specific command functions
 void SUSI::add_specialty(Specialty specialty)
@@ -47,9 +56,9 @@ void SUSI::add_subject(String name, bool isCompulsory, unsigned int course, Stri
 	}
 }
 
-void SUSI::enroll(unsigned int fn, String specialtyName, unsigned int group, String name)
+void SUSI::enroll(unsigned int facultyNumber, String specialtyName, unsigned int group, String name)
 {
-	Student studentToEnroll(name, fn, specialtyName, group);
+	Student studentToEnroll(name, facultyNumber, specialtyName, group);
 	Specialty buffer(specialtyName);
 	for (size_t i = 0; i < specialties.length(); i++)	//Finding the specialty, where the student will be enrolled
 	{
@@ -61,84 +70,84 @@ void SUSI::enroll(unsigned int fn, String specialtyName, unsigned int group, Str
 	}
 }
 
-void SUSI::advance(unsigned int fn)
+void SUSI::advance(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))
 		{
-			specialties[i].advanceStudent(fn);
+			specialties[i].advanceStudent(facultyNumber);
 			return;
 		}
 	}
 }
 
-void SUSI::changeSpecialty(unsigned int fn, String newSpecialty)
+void SUSI::changeSpecialty(unsigned int facultyNumber, String newSpecialty)
 {
-	Student newStudent = findStudent(fn);
+	Student newStudent = findStudent(facultyNumber);
 	newStudent.setNewSpecialty(newSpecialty);
 	newStudent.removeUnpassedElectiveSubjects();	//Removing all the unpassed elective subjects, because they may not be available in the new specialty
 	
-	removeFromCurrentSpecialty(fn);
+	removeFromCurrentSpecialty(facultyNumber);
 	addToNewSpecialty(newStudent, newSpecialty);
 }
 
-void SUSI::changeGroup(unsigned int fn, unsigned int newGroup)
+void SUSI::changeGroup(unsigned int facultyNumber, unsigned int newGroup)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))
 		{
-			specialties[i].changeGroupOfStudent(fn, newGroup);
+			specialties[i].changeGroupOfStudent(facultyNumber, newGroup);
 			return;
 		}
 	}
 }
 
-void SUSI::graduate(unsigned int fn)
+void SUSI::graduate(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))
 		{
-			specialties[i].graduateStudent(fn);
+			specialties[i].graduateStudent(facultyNumber);
 			return;
 		}
 	}
 }
 
-void SUSI::interrupt(unsigned int fn)
+void SUSI::interrupt(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))
 		{
-			specialties[i].interruptStudent(fn);
+			specialties[i].interruptStudent(facultyNumber);
 			return;
 		}
 	}
 }
 
-void SUSI::resume(unsigned int fn)
+void SUSI::resume(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))
 		{
-			specialties[i].resumeStudent(fn);
+			specialties[i].resumeStudent(facultyNumber);
 			return;
 		}
 	}
 }
 
-void SUSI::print(unsigned int fn)
+void SUSI::print(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		for (size_t j = 0; j < specialties[i].getStudents().length(); j++)	//Going through the students in this specialty (specialties[i])
@@ -154,6 +163,7 @@ void SUSI::print(unsigned int fn)
 
 void SUSI::print_all(String specialtyName, unsigned int course)
 {
+	int counter = 0;
 	Specialty bufferSpecialty(specialtyName);
 	for (size_t i = 0; i < specialties.length(); i++)	//Searching for the specialty with the name 'specialtyName'
 	{
@@ -163,36 +173,38 @@ void SUSI::print_all(String specialtyName, unsigned int course)
 			{
 				if (specialties[i].getStudents()[j].getCourse() == course)	//finding the students from this course
 				{
-					std::cout << specialties[i].getStudents()[j].getName() << " " << specialties[i].getStudents()[j].getFN() << std::endl;	//Printing the info of the student
+					std::cout << specialties[i].getStudents()[j].getName() << " " << specialties[i].getStudents()[j].getFacultyNumber() << std::endl;	//Printing the info of the student
+					counter++;	//counting the students in this specialty and course
 				}
 			}
+			if (counter == 0) { std::cout << "There are no students in this specialty and course.\n"; }
 			std::cout << std::endl;
 			return;
 		}
 	}
 }
 
-void SUSI::enroll_in(unsigned int fn, Subject subject)
+void SUSI::enroll_in(unsigned int facultyNumber, Subject subject)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//Searching for the student with the same faculty number as the faculty number of 'buffer'
 		{
-			specialties[i].enrollStudentInSubject(fn, subject);
+			specialties[i].enrollStudentInSubject(facultyNumber, subject);
 			return;
 		}
 	}
 }
 
-void SUSI::add_grade(unsigned int fn, Subject subjectToCompareWith, float grade)
+void SUSI::add_grade(unsigned int facultyNumber, Subject subjectToCompareWith, float grade)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//Searching for the student with the same faculty number as the faculty number of 'buffer'
 		{
-			specialties[i].addGradeToSubject(fn, subjectToCompareWith, grade);
+			specialties[i].addGradeToSubject(facultyNumber, subjectToCompareWith, grade);
 			return;
 		}
 	}
@@ -212,9 +224,17 @@ void SUSI::protocol(String subjectName)
 	}
 }
 
-void SUSI::report(unsigned int fn)
+void SUSI::report(unsigned int facultyNumber)
 {
-
+	Student buffer("default", facultyNumber, "default", 0);
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
+	{
+		if (specialties[i].getStudents().containsElement(buffer))	//Searching for the student with the same faculty number as the faculty number of 'buffer'
+		{
+			specialties[i].report(facultyNumber);
+			return;
+		}
+	}
 }
 
 
@@ -224,11 +244,8 @@ void SUSI::prepareAdd_Specialty(String input, int currentIndex)
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. More data is needed.
 	
 	String specialtyName = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command. There must be only name of specialty.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
+	
 	if (isRegisteredSpecialty(specialtyName))	//Checking if the specialty is already registered to SUSI.
 	{
 		std::cout << "Adding specialty failed. This specialty had already been added to SUSI.\n\n";
@@ -285,11 +302,8 @@ void SUSI::prepareAdd_Subject(String input, int currentIndex)
 
 	
 	String specialtyName = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
+
 	if (!isRegisteredSpecialty(specialtyName))	//Checking if the specialty is registered. You can not add subject to non-existing specialty.
 	{
 		std::cout << "Adding subject failed. There is not such specialty.\n\n";
@@ -310,25 +324,26 @@ void SUSI::prepareEnroll(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
+	String facultyNumberStr = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 	
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (isRegisteredStudentByFacultyNumber(fn))	//Checking if there is already a student with this faculty number.
+	if (isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking if there is already a student with this faculty number.
 	{
 		std::cout << "Enrolling student failed. There is already student with this faculty number in the system.\n\n";
 		return;
@@ -337,6 +352,7 @@ void SUSI::prepareEnroll(String input, int currentIndex)
 
 	String specialtyName = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
+
 	if (!isRegisteredSpecialty(specialtyName))	//Checking if the specialty is registered. You can not enroll student to non-existing specialty.
 	{
 		std::cout << "Enrolling student failed. There is not such specialty.\n\n";
@@ -345,6 +361,8 @@ void SUSI::prepareEnroll(String input, int currentIndex)
 
 
 	String groupNumber = findingNextWord(input, currentIndex);
+	if (isEndOfString(input, currentIndex)) { return; }
+	
 	for (size_t i = 0; i < groupNumber.length(); i++)	//Validation of the group number.
 	{
 		if (groupNumber[i] < '0' || '9' < groupNumber[i])
@@ -353,7 +371,6 @@ void SUSI::prepareEnroll(String input, int currentIndex)
 			return;
 		}
 	}
-	if (isEndOfString(input, currentIndex)) { return; }
 
 	unsigned int group = (unsigned int)stringToPositiveNumber(groupNumber, groupNumber.length());
 	if (group == 0)	//Validation if the course is bigger than zero (0).
@@ -370,97 +387,94 @@ void SUSI::prepareEnroll(String input, int currentIndex)
 	}
 
 
-	enroll(fn, specialtyName, group, name);
+	enroll(facultyNumber, specialtyName, group, name);
 }
 
 void SUSI::prepareAdvance(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'graduate' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isInterrupted(fn))
+	if (isInterrupted(facultyNumber))
 	{
 		std::cout << "Command failed. This student had interrupted.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
 	}
 
-	if (!isReadyToAdvance(fn))	//Checking if this student has more than 2 unpassed exams
+	if (!isReadyToAdvance(facultyNumber))	//Checking if this student has more than 2 unpassed exams
 	{
 		std::cout << "This student had not passed enough exams to go in next course.\n\n";
 		return;
 	}
 
 	
-	advance(fn);
+	advance(facultyNumber);
 }
 
 void SUSI::prepareChange(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
+	String facultyNumberStr = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'change' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isInterrupted(fn))
+	if (isInterrupted(facultyNumber))
 	{
 		std::cout << "Command failed. This student had interrupted.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
@@ -469,6 +483,7 @@ void SUSI::prepareChange(String input, int currentIndex)
 	
 	String option = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
+
 	if (option != "specialty" && option != "group" && option != "year")
 	{
 		std::cout << "This is not a valid option. You can change only the specialty, the group or the year.\n\n";
@@ -477,28 +492,30 @@ void SUSI::prepareChange(String input, int currentIndex)
 
 	
 	String value = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
 
 	if (option == "specialty")	//If the chosen option is "specialty"
 	{
+		if (isRegisteredStudentInSpecialty(facultyNumber, value))
+		{
+			std::cout << "This student is already enrolled in this specialty.\n\n";
+			return;
+		}
+
 		if (!isRegisteredSpecialty(value))	//Checking if the specialty is registered. You can not re-enroll student to non-existing specialty.
 		{
 			std::cout << "Changing specialty failed. There is not specialty '" << value << "'.\n\n";
 			return;
 		}
 
-		if (!isReadyToChangeSpecialty(fn))
+		if (!isReadyToChangeSpecialty(facultyNumber))
 		{
 			std::cout << "Changing specialty failed. This student had not passed all exams for compulsory subjects.\n\n";
 			return;
 		}
 
-		changeSpecialty(fn, value);
+		changeSpecialty(facultyNumber, value);
 	}
 
 	if (option == "group")		//If the chosen option is "group"
@@ -519,15 +536,12 @@ void SUSI::prepareChange(String input, int currentIndex)
 			return;
 		}
 
-		changeGroup(fn, newGroup);
+		changeGroup(facultyNumber, newGroup);
 	}
 
 	if (option == "year")		//If the chosen option is "year"
 	{
-
-		//To Do: validate if the input for year is the next year (course) || print "student successfully advanced to the next course"
-
-		advance(fn);
+		advance(facultyNumber);
 	}
 }
 
@@ -535,181 +549,165 @@ void SUSI::prepareGraduate(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'graduate' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isInterrupted(fn))
+	if (isInterrupted(facultyNumber))
 	{
 		std::cout << "Command failed. This student had interrupted.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
 	}
 
-	if (!isReadyToGraduate(fn))
+	if (!isReadyToGraduate(facultyNumber))
 	{
 		std::cout << "Command 'graduate' failed. This student had not passed all exams.\n\n";
 		return;
 	}
 
 
-	graduate(fn);
+	graduate(facultyNumber);
 }
 
 void SUSI::prepareInterrupt(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'interrupt' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
 	}
 
 
-	interrupt(fn);
+	interrupt(facultyNumber);
 }
 
 void SUSI::prepareResume(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'resume' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (!isInterrupted(fn))
+	if (!isInterrupted(facultyNumber))
 	{
 		std::cout << "Student successfully resumed.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
 	}
 
 
-	resume(fn);
+	resume(facultyNumber);
 }
 
 void SUSI::preparePrint(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
 
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'print' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	print(fn);
+	print(facultyNumber);
 }
 
 void SUSI::preparePrint_All(String input, int currentIndex)
@@ -718,6 +716,7 @@ void SUSI::preparePrint_All(String input, int currentIndex)
 
 	String specialtyName = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
+
 	if (!isRegisteredSpecialty(specialtyName))	//Checking if the specialty is registered. You can not enroll student to non-existing specialty.
 	{
 		std::cout << "Command 'print_all' failed. There is not such specialty.\n\n";
@@ -725,11 +724,7 @@ void SUSI::preparePrint_All(String input, int currentIndex)
 	}
 
 	String courseString = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
 	for (size_t i = 0; i < courseString.length(); i++)	//Validation of the faculty number.
 	{
@@ -755,35 +750,36 @@ void SUSI::prepareEnroll_In(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isEndOfString(input, currentIndex)) { return; }
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'print' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isInterrupted(fn))
+	if (isInterrupted(facultyNumber))
 	{
 		std::cout << "Command failed. This student had interrupted.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
@@ -791,16 +787,12 @@ void SUSI::prepareEnroll_In(String input, int currentIndex)
 
 
 	String subjectName = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
 
 	//Checking if the specialty of this student has this subject in this course/year
-	unsigned int studentCourse = findingCourseOfStudent(fn);
-	String studentSpecialty = findingSpecialtyOfStudent(fn);
+	unsigned int studentCourse = findingCourseOfStudent(facultyNumber);
+	String studentSpecialty = findingSpecialtyOfStudent(facultyNumber);
 	if (!isRegisteredSubjectInSpecialty(subjectName, studentCourse, studentSpecialty))
 	{
 		std::cout << "Command 'enroll_in' failed. There is not such subject in the year and the specialty of the student with the entered faculty number.\n\n";
@@ -809,42 +801,43 @@ void SUSI::prepareEnroll_In(String input, int currentIndex)
 	Subject subjectToEnrollIn = findingSubjectAndSettingData(subjectName, studentCourse, studentSpecialty);	//Setting more data to 'subjectToEnrollIn' (only type - compulsory/elective)
 	
 	
-	enroll_in(fn, subjectToEnrollIn);
+	enroll_in(facultyNumber, subjectToEnrollIn);
 }
 
 void SUSI::prepareAdd_Grade(String input, int currentIndex)
 {
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
-	String facultyNumber = findingNextWord(input, currentIndex);
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isEndOfString(input, currentIndex)) { return; }
 
-	for (size_t i = 0; i < facultyNumber.length(); i++)	//Validation of the faculty number.
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
 	{
-		if (facultyNumber[i] < '0' || '9' < facultyNumber[i])
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
 		{
 			std::cout << "The faculty number must be a positive number.\n\n";
 			return;
 		}
 	}
 
-	unsigned int fn = stringToPositiveNumber(facultyNumber, facultyNumber.length());
-	if (fn == 0)	//Validation if the faculty number is bigger than zero (0).
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
 	{
 		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
 		return;
 	}
-	if (!isRegisteredStudentByFacultyNumber(fn))	//Checking by faculty number if the student is registered.
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
 	{
 		std::cout << "Command 'print' failed. There is not student with this faculty number in the system.\n\n";
 		return;
 	}
 
-	if (isInterrupted(fn))
+	if (isInterrupted(facultyNumber))
 	{
 		std::cout << "Command failed. This student had interrupted.\n\n";
 		return;
 	}
-	if (isGraduated(fn))
+	if (isGraduated(facultyNumber))
 	{
 		std::cout << "Command failed. This student had already graduated.\n\n";
 		return;
@@ -854,8 +847,8 @@ void SUSI::prepareAdd_Grade(String input, int currentIndex)
 	String subjectName = findingNextWord(input, currentIndex);
 	if (isEndOfString(input, currentIndex)) { return; }
 
-	unsigned int studentCourse = findingCourseOfStudent(fn);
-	String studentSpecialty = findingSpecialtyOfStudent(fn);
+	unsigned int studentCourse = findingCourseOfStudent(facultyNumber);
+	String studentSpecialty = findingSpecialtyOfStudent(facultyNumber);
 	if (!isRegisteredSubjectInSpecialty(subjectName, studentCourse, studentSpecialty))	//Checking if the specialty of this student has this subject in this course/year
 	{
 		std::cout << "Command 'add_grade' failed. There is not such subject in the year and the specialty of the student with the entered faculty number.\n\n";
@@ -864,7 +857,7 @@ void SUSI::prepareAdd_Grade(String input, int currentIndex)
 	
 	Subject subjectToCompareWith(subjectName, true, studentCourse);
 
-	if (isPassedExam(fn, subjectToCompareWith))
+	if (isPassedExam(facultyNumber, subjectToCompareWith))
 	{
 		std::cout << "This student had already passed this exam, you can not change its grade.\n\n";
 		return;
@@ -872,13 +865,9 @@ void SUSI::prepareAdd_Grade(String input, int currentIndex)
 
 
 	String gradeString = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
-	float grade = strtof(gradeString.content, '\0');
+	float grade = strtof(gradeString.c_str(), '\0');
 	if (grade < 2 || 6 < grade)
 	{
 		std::cout << "Command 'add_grade' failed. The grade must be a number between 2 and 6.\n\n";
@@ -886,7 +875,7 @@ void SUSI::prepareAdd_Grade(String input, int currentIndex)
 	}
 
 	
-	add_grade(fn, subjectToCompareWith, grade);
+	add_grade(facultyNumber, subjectToCompareWith, grade);
 }
 
 void SUSI::prepareProtocol(String input, int currentIndex)
@@ -894,18 +883,42 @@ void SUSI::prepareProtocol(String input, int currentIndex)
 	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
 
 	String subjectName = findingNextWord(input, currentIndex);
-	if (input[currentIndex] != '\0')	//Checking if there are more arguments for the command.
-	{
-		std::cout << "Too much arguments in the command.\n\n";
-		return;
-	}
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
 
 	protocol(subjectName);
 }
 
 void SUSI::prepareReport(String input, int currentIndex)
 {
-	//report();
+	if (isEndOfString(input, currentIndex)) { return; }	//If it is end of the input, then it is not valid input. It is needed more data.
+
+	String facultyNumberStr = findingNextWord(input, currentIndex);
+	if (isNotEndOfString(input, currentIndex)) { return; }	//Checking if there are more arguments for the command.
+
+	for (size_t i = 0; i < facultyNumberStr.length(); i++)	//Validation of the faculty number.
+	{
+		if (facultyNumberStr[i] < '0' || '9' < facultyNumberStr[i])
+		{
+			std::cout << "The faculty number must be a positive number.\n\n";
+			return;
+		}
+	}
+
+	unsigned int facultyNumber = stringToPositiveNumber(facultyNumberStr, facultyNumberStr.length());
+	if (facultyNumber == 0)	//Validation if the faculty number is bigger than zero (0).
+	{
+		std::cout << "The faculty number must be a positive number, bigger than 0.\n\n";
+		return;
+	}
+
+	if (!isRegisteredStudentByFacultyNumber(facultyNumber))	//Checking by faculty number if the student is registered.
+	{
+		std::cout << "Command 'graduate' failed. There is not student with this faculty number in the system.\n\n";
+		return;
+	}
+
+	
+	report(facultyNumber);
 }
 
 
@@ -943,91 +956,12 @@ bool isEndOfString(String input, int currentIndex)
 	return false;
 }
 
-unsigned int SUSI::findingCourseOfStudent(unsigned int fn)
+bool isNotEndOfString(String input, int currentIndex)
 {
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
+	if (input[currentIndex] != '\0')
 	{
-		for (size_t j = 0; j < specialties[i].getStudents().length(); j++)	//Going through the students of this specialty (specialties[i])
-		{
-			if (specialties[i].getStudents()[j].getFN() == fn)
-			{
-				return specialties[i].getStudents()[j].getCourse();
-			}
-		}
+		std::cout << "This is not a valid input. Too many arguments.\n\n";
+		return true;
 	}
-}
-
-String SUSI::findingSpecialtyOfStudent(unsigned int fn)
-{
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
-	{
-		for (size_t j = 0; j < specialties[i].getStudents().length(); j++)	//Going through the students of this specialty (specialties[i])
-		{
-			if (specialties[i].getStudents()[j].getFN() == fn)
-			{
-				return specialties[i].getStudents()[j].getSpecialty();
-			}
-		}
-	}
-}
-
-Subject SUSI::findingSubjectAndSettingData(String subjectName, unsigned int studentCourse, String studentSpecialty)
-{
-	Specialty specialtyToCheck(studentSpecialty);
-	Subject subjectToCheckAndSet(subjectName, true, studentCourse);
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
-	{
-		if (specialties[i] == specialtyToCheck)	//Finding the specialty of the student
-		{
-			for (size_t j = 0; j < specialties[i].getSubjects().length(); j++)	//Going through the subjects in this specialty (specialties[i])
-			{
-				if (specialties[i].getSubjects()[j] == subjectToCheckAndSet)	//Finding the subject in this year (studentCourse) of this specialty (studentSpecialty)
-				{
-					subjectToCheckAndSet = specialties[i].getSubjects()[j];	//Setting the new data (only 'isCompulsory' of the subject)
-					return subjectToCheckAndSet;
-				}
-			}
-			break;
-		}
-	}
-}
-
-Student SUSI::findStudent(unsigned int fn)
-{
-	Student buffer("default", fn, "default", 0);
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
-	{
-		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
-		{
-			return specialties[i].findStudent(fn);
-		}
-	}
-	std::cout << "Command failed. There is not such student.\n\n";
-}
-
-void SUSI::removeFromCurrentSpecialty(unsigned int fn)
-{
-	Student buffer("default", fn, "default", 0);
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
-	{
-		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
-		{
-			specialties[i].removeStudent(fn);
-			return;
-		}
-	}
-	std::cout << "Command failed. There is not such student.\n\n";
-}
-
-void SUSI::addToNewSpecialty(const Student & student, String newSpecialty)
-{
-	Specialty buffer(newSpecialty);
-	for (size_t i = 0; i < specialties.length(); i++)
-	{
-		if (specialties[i] == buffer)
-		{
-			specialties[i].addToNewSpecialty(student);
-			return;
-		}
-	}
+	return false;
 }

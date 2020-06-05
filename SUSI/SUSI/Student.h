@@ -8,7 +8,7 @@ class Student
 {
 private:
 	String name;
-	unsigned int fn;	//faculty number
+	unsigned int facultyNumber;
 	String specialty;
 	unsigned int course;
 	unsigned int group;
@@ -18,15 +18,15 @@ private:
 
 public:
 	Student();
-	Student(String _name, unsigned int _fn, String _specialty, unsigned int group);
-	Student& operator= (const Student& other);
+	Student(String _name, unsigned int _facultyNumber, String _specialty, unsigned int group);
+	Student& operator= (const Student &other);
 	~Student();
 
-	bool operator== (const Student& other);	//needed for the containsElement method in class Vector
-	bool operator!= (const Student& other);
+	bool operator== (const Student &other);
+	bool operator!= (const Student &other);
 	
 	String getName() const;
-	unsigned int getFN() const;
+	unsigned int getFacultyNumber() const;
 	String getSpecialty() const;
 	unsigned int getCourse() const;
 	unsigned int getGroup() const;
@@ -53,7 +53,7 @@ public:
 	void setGradeToSubject(Subject subjectToCompareWith, float grade);
 	void updateAverageGrade();
 	void removeUnpassedElectiveSubjects();
-
+	void report();
 };
 
-std::ostream& operator<< (std::ostream& out, Student student);
+std::ostream& operator<< (std::ostream &out, Student student);

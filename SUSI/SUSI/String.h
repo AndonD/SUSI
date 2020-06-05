@@ -4,17 +4,19 @@
 
 class String
 {
-public:
-	char *content;
+private:
+	char* content;
 
+public:
 	String();
 	String(char c);
-	String(const char *otherStr);
+	String(const char* otherStr);
 	String(const String &other);
+	char* c_str() const;
 	size_t length() const;
-	void initialize(const char *otherStr);
+	void initialize(const char* otherStr);
 	void clear();
-	void print();
+	void print() const;
 	String operator+ (char c);
 	String& operator+= (char c);
 	String operator+ (const String &other);
@@ -29,5 +31,5 @@ public:
 };
 
 String operator+ (char c, const String &str);
-std::ostream& operator<< (std::ostream& out, String s);
-std::istream& operator>> (std::istream& in, String& s);
+std::ostream& operator<< (std::ostream &out, const String &str);
+std::istream& operator>> (std::istream &in, String &str);

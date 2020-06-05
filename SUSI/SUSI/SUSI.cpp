@@ -9,6 +9,9 @@ String findingNextWord(String input, int &currentIndex);
 
 void SUSI::startSUSI()
 {
+	std::cout << "Instructions:\n";
+	help();
+
 	//Start
 	String input;
 	std::cin >> input;
@@ -45,7 +48,7 @@ void SUSI::startSUSI()
 		}
 		else if (commandName == "help")
 		{
-			//help();
+			help();
 		}
 
 		//Specific functions for SUSI
@@ -103,7 +106,6 @@ void SUSI::startSUSI()
 		}
 		else if (commandName == "report")
 		{
-			//качи си го в GitHub-a
 			prepareReport(input, currentIndex);
 		}
 		else if (commandName == "exit")
@@ -161,36 +163,36 @@ bool SUSI::isRegisteredSubject(String subjectName, unsigned int course)
 	return false;
 }
 
-bool SUSI::isPassedExam(unsigned int fn, Subject subjectToCompareWith)
+bool SUSI::isPassedExam(unsigned int facultyNumber, Subject subjectToCompareWith)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//Searching for the student with the same faculty number as the faculty number of 'buffer'
 		{
-			return specialties[i].isPassedExam(fn, subjectToCompareWith);	
+			return specialties[i].isPassedExam(facultyNumber, subjectToCompareWith);
 		}
 	}
 	return false;	//Default return
 }
 
-//bool SUSI::isRegisteredStudentInSpecialty(unsigned int fn, String specialtyName, unsigned int group, String name)
-//{
-//	Student buffer(name, fn, specialtyName, group);
-//	for (size_t i = 0; i < specialties.length(); i++)
-//	{
-//		if (specialties[i].getName() == specialtyName)
-//		{
-//			return specialties[i].isRegisteredStudent(buffer);
-//		}
-//	}
-//	std::cout << "There is not such specialty.\n\n";
-//	return false;
-//}
-
-bool SUSI::isRegisteredStudentByFacultyNumber(unsigned int fn)
+bool SUSI::isRegisteredStudentInSpecialty(unsigned int facultyNumber, String specialtyName)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
+	for (size_t i = 0; i < specialties.length(); i++)
+	{
+		if (specialties[i].getName() == specialtyName)
+		{
+			return specialties[i].isRegisteredStudent(buffer);
+		}
+	}
+	std::cout << "There is not such specialty.\n\n";
+	return false;
+}
+
+bool SUSI::isRegisteredStudentByFacultyNumber(unsigned int facultyNumber)
+{
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
@@ -201,72 +203,161 @@ bool SUSI::isRegisteredStudentByFacultyNumber(unsigned int fn)
 	return false;
 }
 
-bool SUSI::isReadyToAdvance(unsigned int fn)
+bool SUSI::isReadyToAdvance(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
-			return specialties[i].isReadyToAdvance(fn);
+			return specialties[i].isReadyToAdvance(facultyNumber);
 		}
 	}
 
 	return false;	//Default return
 }
 
-bool SUSI::isReadyToChangeSpecialty(unsigned int fn)
+bool SUSI::isReadyToChangeSpecialty(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
-			return specialties[i].isReadyToChangeSpecialty(fn);
+			return specialties[i].isReadyToChangeSpecialty(facultyNumber);
 		}
 	}
 
 	return false;	//Default return
 }
 
-bool SUSI::isInterrupted(unsigned int fn)
+bool SUSI::isInterrupted(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
-			return specialties[i].isInterruptedStudent(fn);
+			return specialties[i].isInterruptedStudent(facultyNumber);
 		}
 	}
 
 	return false;	//Default return
 }
 
-bool SUSI::isGraduated(unsigned int fn)
+bool SUSI::isGraduated(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
-			return specialties[i].isGraduatedStudent(fn);
+			return specialties[i].isGraduatedStudent(facultyNumber);
 		}
 	}
 
 	return false;	//Default return
 }
 
-bool SUSI::isReadyToGraduate(unsigned int fn)
+bool SUSI::isReadyToGraduate(unsigned int facultyNumber)
 {
-	Student buffer("default", fn, "default", 0);
+	Student buffer("default", facultyNumber, "default", 0);
 	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
 	{
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
-			return specialties[i].isReadyToGraduate(fn);
+			return specialties[i].isReadyToGraduate(facultyNumber);
 		}
 	}
 
 	return false;	//Default return
+}
+
+unsigned int SUSI::findingCourseOfStudent(unsigned int facultyNumber)
+{
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
+	{
+		for (size_t j = 0; j < specialties[i].getStudents().length(); j++)	//Going through the students of this specialty (specialties[i])
+		{
+			if (specialties[i].getStudents()[j].getFacultyNumber() == facultyNumber)
+			{
+				return specialties[i].getStudents()[j].getCourse();
+			}
+		}
+	}
+}
+
+String SUSI::findingSpecialtyOfStudent(unsigned int facultyNumber)
+{
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
+	{
+		for (size_t j = 0; j < specialties[i].getStudents().length(); j++)	//Going through the students of this specialty (specialties[i])
+		{
+			if (specialties[i].getStudents()[j].getFacultyNumber() == facultyNumber)
+			{
+				return specialties[i].getStudents()[j].getSpecialty();
+			}
+		}
+	}
+}
+
+Subject SUSI::findingSubjectAndSettingData(String subjectName, unsigned int studentCourse, String studentSpecialty)
+{
+	Specialty specialtyToCheck(studentSpecialty);
+	Subject subjectToCheckAndSet(subjectName, true, studentCourse);
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
+	{
+		if (specialties[i] == specialtyToCheck)	//Finding the specialty of the student
+		{
+			for (size_t j = 0; j < specialties[i].getSubjects().length(); j++)	//Going through the subjects in this specialty (specialties[i])
+			{
+				if (specialties[i].getSubjects()[j] == subjectToCheckAndSet)	//Finding the subject in this year (studentCourse) of this specialty (studentSpecialty)
+				{
+					subjectToCheckAndSet = specialties[i].getSubjects()[j];	//Setting the new data (only 'isCompulsory' of the subject)
+					return subjectToCheckAndSet;
+				}
+			}
+			break;
+		}
+	}
+}
+
+Student SUSI::findStudent(unsigned int facultyNumber)
+{
+	Student buffer("default", facultyNumber, "default", 0);
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
+	{
+		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
+		{
+			return specialties[i].findStudent(facultyNumber);
+		}
+	}
+	std::cout << "Command failed. There is not such student.\n\n";
+}
+
+void SUSI::removeFromCurrentSpecialty(unsigned int facultyNumber)
+{
+	Student buffer("default", facultyNumber, "default", 0);
+	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties in SUSI
+	{
+		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
+		{
+			specialties[i].removeStudent(facultyNumber);
+			return;
+		}
+	}
+	std::cout << "Command failed. There is not such student.\n\n";
+}
+
+void SUSI::addToNewSpecialty(const Student &student, String newSpecialty)
+{
+	Specialty buffer(newSpecialty);
+	for (size_t i = 0; i < specialties.length(); i++)
+	{
+		if (specialties[i] == buffer)
+		{
+			specialties[i].addToNewSpecialty(student);
+			return;
+		}
+	}
 }
