@@ -10,6 +10,14 @@ Subject::Subject()
 	grade = 2;	//default grade
 }
 
+//Subject::Subject(const Subject &other)
+//{
+//	this->name = other.name;
+//	this->course = other.course;
+//	this->isCompulsory = other.isCompulsory;
+//	this->grade = other.grade;
+//}
+
 Subject::Subject(String _name, bool _isCompulsory, unsigned int _course)
 {
 	this->name = _name;

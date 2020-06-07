@@ -13,6 +13,18 @@ Student::Student()
 	averageGrade = 0;
 }
 
+Student::Student(const Student &other)
+{
+	this->name = other.name;
+	this->facultyNumber = other.facultyNumber;
+	this->specialty = other.specialty;
+	this->course = other.course;
+	this->group = other.group;
+	this->status = other.status;
+	this->averageGrade = other.averageGrade;
+	this->subjects = other.subjects;
+}
+
 Student::Student(String _name, unsigned int _facultyNumber, String _specialty, unsigned int _group)
 {
 	this->name = _name;
@@ -242,7 +254,7 @@ bool Student::hasPassedExam(Subject subjectToCompareWith)
 {
 	for (size_t i = 0; i < this->subjects.length(); i++)
 	{
-		if (subjects[i] == subjectToCompareWith)
+		if (subjects[i].getName() == subjectToCompareWith.getName())
 		{
 			if (subjects[i].getGrade() < 3 || 6 < subjects[i].getGrade())
 			{
@@ -261,7 +273,7 @@ void Student::setGradeToSubject(Subject subjectToCompareWith, float grade)
 {
 	for (size_t i = 0; i < this->subjects.length(); i++)
 	{
-		if (subjects[i] == subjectToCompareWith)
+		if (subjects[i].getName() == subjectToCompareWith.getName())
 		{
 			subjects[i].setGrade(grade);
 			if (3 <= grade && grade <= 6)

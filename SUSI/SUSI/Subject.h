@@ -13,6 +13,7 @@ private:
 
 public:
 	Subject();
+	//Subject(const Subject &other);
 	Subject(String _name, bool _isCompulsory, unsigned int _course);
 	Subject& operator= (const Subject &other);
 	~Subject();

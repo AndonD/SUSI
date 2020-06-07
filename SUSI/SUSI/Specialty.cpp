@@ -7,9 +7,25 @@ Specialty::Specialty()
 	name = "";
 }
 
+Specialty::Specialty(const Specialty &other)
+{
+	this->name = other.name;
+	this->students = other.students;
+	this->subjects = other.subjects;
+}
+
 Specialty::Specialty(String _name)
 {
 	this->name = _name;
+}
+
+Specialty& Specialty::operator=(const Specialty &other)
+{
+	this->name = other.name;
+	this->students = other.students;
+	this->subjects = other.subjects;
+
+	return *this;
 }
 
 Specialty::~Specialty()
@@ -97,6 +113,18 @@ bool Specialty::isGraduatedStudent(unsigned int facultyNumber)
 		}
 	}
 	return false;	//Default return
+}
+
+bool Specialty::hasThisSubject(unsigned int facultyNumber, String subjectName)
+{
+	for (size_t i = 0; i < students.length(); i++)
+	{
+		if (students[i].getFacultyNumber() == facultyNumber)
+		{
+			return students[i].hasThisSubject(subjectName);
+		}
+	}
+	return false;
 }
 
 

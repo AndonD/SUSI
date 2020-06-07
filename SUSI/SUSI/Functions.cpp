@@ -31,8 +31,8 @@ void SUSI::help()
 		<< "add_grade <faculty number> <subject> <grade>\n"
 		<< "protocol <subject>\n"
 		<< "report <faculty number>\n"
-		<< "help -> prints this info\n\n"
-		<< "exit - ends the program\n\n";
+		<< "help -> prints this info\n"
+		<< "exit -> ends the program\n\n";
 }
 
 //Specific command functions
@@ -848,8 +848,7 @@ void SUSI::prepareAdd_Grade(String input, int currentIndex)
 	if (isEndOfString(input, currentIndex)) { return; }
 
 	unsigned int studentCourse = findingCourseOfStudent(facultyNumber);
-	String studentSpecialty = findingSpecialtyOfStudent(facultyNumber);
-	if (!isRegisteredSubjectInSpecialty(subjectName, studentCourse, studentSpecialty))	//Checking if the specialty of this student has this subject in this course/year
+	if (!hasThisSubject(facultyNumber, subjectName))	//Checking if this student has this subject
 	{
 		std::cout << "Command 'add_grade' failed. There is not such subject in the year and the specialty of the student with the entered faculty number.\n\n";
 		return;

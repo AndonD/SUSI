@@ -20,7 +20,6 @@ public:
 	void startSUSI();	//start of the program SUSI
 	bool isRegisteredSpecialty(String specialtyName);
 	bool isRegisteredSubjectInSpecialty(String subjectName, unsigned int course, String specialtyName);
-	bool isRegisteredSubject(String subjectName, unsigned int course);
 	bool isPassedExam(unsigned int facultyNumber, Subject subjectToCompare);
 	bool isRegisteredStudentInSpecialty(unsigned int facultyNumber, String specialtyName);
 	bool isRegisteredStudentByFacultyNumber(unsigned int facultyNumber);
@@ -29,6 +28,7 @@ public:
 	bool isInterrupted(unsigned int facultyNumber);
 	bool isGraduated(unsigned int facultyNumber);
 	bool isReadyToGraduate(unsigned int facultyNumber);
+	bool hasThisSubject(unsigned int facultyNumber, String subjectName);
 	unsigned int findingCourseOfStudent(unsigned int facultyNumber);
 	String findingSpecialtyOfStudent(unsigned int facultyNumber);
 	Subject findingSubjectAndSettingData(String subjectName, unsigned int studentCourse, String studentSpecialty);
@@ -39,10 +39,10 @@ public:
 
 	
 	//Basic command functions
-	void open();
+	/*void open();
 	void close();
 	void save();
-	void save_as();
+	void save_as();*/	//Future plans
 	void help();
 
 	//Specific command functions

@@ -14,7 +14,9 @@ private:
 
 public:
 	Specialty();
+	Specialty(const Specialty &other);
 	Specialty(String _name);
+	Specialty& operator= (const Specialty &other);
 	~Specialty();
 	
 	bool isRegisteredSubject(const Subject &subject);
@@ -25,6 +27,7 @@ public:
 	bool isReadyToGraduate(unsigned int facultyNumber);
 	bool isInterruptedStudent(unsigned int facultyNumber);
 	bool isGraduatedStudent(unsigned int facultyNumber);
+	bool hasThisSubject(unsigned int facultyNumber, String subjectName);
 
 	bool operator== (const Specialty &other);
 	bool operator!= (const Specialty &other);

@@ -18,6 +18,7 @@ private:
 
 public:
 	Student();
+	Student(const Student &other);
 	Student(String _name, unsigned int _facultyNumber, String _specialty, unsigned int group);
 	Student& operator= (const Student &other);
 	~Student();

@@ -30,23 +30,24 @@ void SUSI::startSUSI()
 		String commandName = findingNextWord(input, currentIndex);
 
 		//Basic functions
-		if (commandName == "open")
-		{
-			//open();
-		}
-		else if (commandName == "close")
-		{
-			//close();
-		}
-		else if (commandName == "save")
-		{
-			//save();
-		}
-		else if (commandName == "save_as")
-		{
-			//save_as();
-		}
-		else if (commandName == "help")
+		//if (commandName == "open")
+		//{
+		//	//open();
+		//}
+		//else if (commandName == "close")
+		//{
+		//	//close();
+		//}
+		//else if (commandName == "save")
+		//{
+		//	//save();
+		//}
+		//else if (commandName == "save_as")
+		//{
+		//	//save_as();
+		//}
+		//else 
+		if (commandName == "help")
 		{
 			help();
 		}
@@ -147,19 +148,6 @@ bool SUSI::isRegisteredSubjectInSpecialty(String subjectName, unsigned int cours
 		}
 	}
 	std::cout << "There is not such a specialty.\n\n";
-	return false;
-}
-
-bool SUSI::isRegisteredSubject(String subjectName, unsigned int course)
-{
-	Subject buffer(subjectName, true, course);
-	for (size_t i = 0; i < specialties.length(); i++)	//Going through the specialties
-	{
-		if (specialties[i].isRegisteredSubject(buffer))	//Checking if there is a subject same as the 'buffer' subject in this specialty
-		{
-			return true;
-		}
-	}
 	return false;
 }
 
@@ -267,6 +255,20 @@ bool SUSI::isReadyToGraduate(unsigned int facultyNumber)
 		if (specialties[i].getStudents().containsElement(buffer))	//If there is already registered a student with faculty number as the buffer's faculty number in this specialty (specialties[i])
 		{
 			return specialties[i].isReadyToGraduate(facultyNumber);
+		}
+	}
+
+	return false;	//Default return
+}
+
+bool SUSI::hasThisSubject(unsigned int facultyNumber, String subjectName)
+{
+	Student buffer("default", facultyNumber, "default", 0);
+	for (size_t i = 0; i < specialties.length(); i++)
+	{
+		if (specialties[i].getStudents().containsElement(buffer))
+		{
+			return specialties[i].hasThisSubject(facultyNumber, subjectName);
 		}
 	}
 
